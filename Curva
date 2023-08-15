@@ -1,1 +1,20 @@
+//Código Imã
+//A = Esquerda
+//B = Meio
+//C = Direita
 
+#define perto 60 //cm
+#define motorE OUT_A
+#define motorD OUT_C
+#define motorM OUT_B
+#define sensorE SensorUS(IN_1)
+#define sensorD SensorUS(IN_2)
+
+
+task main() {
+   SetSensorLowspeed(IN_1);
+   SetSensorLowspeed(IN_2);
+   Wait(3000);
+   OnRev(OUT_AB, 100) && OnRev(OUT_C,50);
+   Wait(3000)
+   OFF(OUT_ABC)
