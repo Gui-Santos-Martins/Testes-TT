@@ -3,7 +3,7 @@
 //B = Meio
 //C = Direita
 
-#define perto 60 //cm
+#define perto 55 //cm
 #define motorE OUT_A
 #define motorD OUT_C
 #define motorM OUT_B
@@ -19,8 +19,7 @@ task main() {
    while (true) {
      if(sensorE < perto && sensorD < perto)
      {
-      RotateMotor(OUT_AB,75,90);
-      RotateMotor(OUT_C,75,-90);
+      RotateMotor(OUT_AB,75,90) && RotateMotor(OUT_C,75,-90);
       OnFwd(OUT_ABC,100);
       Wait(1000);
       if(sensorE < perto && sensorD < perto)
@@ -72,8 +71,7 @@ task main() {
      else
      //Girar p/ Direita
     {
-          RotateMotor(OUT_AB,75,-90);
-        RotateMotor(OUT_C,75,90);
+         RotateMotor(OUT_AB,75,-90) &&  RotateMotor(OUT_C,75,90);
         OnRev(OUT_ABC,100);
         Wait(1000);
         if(sensorE < perto && sensorD < perto)
