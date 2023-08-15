@@ -2,8 +2,8 @@
 //A = Esquerda
 //B = Meio
 //C = Direita
- 
-#define perto 50 //cm
+
+#define perto 60 //cm
 #define motorE OUT_A
 #define motorD OUT_C
 #define motorM OUT_B
@@ -14,28 +14,28 @@
 task main() {
    SetSensorLowspeed(IN_1);
    SetSensorLowspeed(IN_2);
-   Wait(5000);  
-   OnRev(OUT_ABC,100)
-   Wait(1000)
+   Wait(3000);
+   OnFwd(OUT_ABC,100);
+   Wait(1000);
    while (true) {
      if(sensorE < perto && sensorD < perto)
      {
-      OnFwd(OUT_ABC,100);
+      OnRev(OUT_ABC,100);
       Wait(30);
      }
      else if (sensorE < perto && sensorD > perto)
      //Girar p/ esquerda
     {
-      OnFwd(OUT_A,75)
-      OnRev(OUT_BC,75)
-      Wait(30)
+      OnRev(OUT_AB,75);
+      OnFwd(OUT_C,75);
+      Wait(30);
      }
-     else 
+     else
      //Girar p/ Direita
     {
-      OnRev(OUT_A,75)
-      OnFwd(OUT_C,75)
-      Wait(30)
+      OnFwd(OUT_AB,75);
+      OnRev(OUT_C,75);
+      Wait(30);
      }
 }
 }
