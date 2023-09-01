@@ -25,5 +25,5 @@ task main(Curva) {
    Wait(3000);
    Start Curva()
    Wait(3000)
-   OFF(OUT_ABC)
+   off(OUT_ABC)
 }
