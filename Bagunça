@@ -22,7 +22,7 @@ task diagonal.D(){
 //start digonal.1D;
 //start digonal.2D;
  OnFwd(OUT_ABC,100);
-
+}
 task diagonal.1E(){
 RotateMotor(OUT_AB,75,-90);
 }
@@ -35,7 +35,7 @@ task diagonal.E(){
 //start digonal.1E;
 //start digonal.2E;
  OnFwd(OUT_ABC,100);
-
+}
 task main() {
 
    SetSensorLowspeed(IN_1);
@@ -90,28 +90,26 @@ task main() {
 
      }
      else
-     //Girar p/ Direita
-    {
-         RotateMotor(OUT_AB,75,-90) &&  RotateMotor(OUT_C,75,90);
-        OnRev(OUT_ABC,100);
-        Wait(1000);
-        if(sensorE < perto && sensorD < perto)
-      {
-        OnFwd(OUT_ABC,100);
-        Wait(30);
-       }
-       else if (sensorE < perto && sensorD > perto)
-      {
-        OnRev(OUT_AB,75);
-        OnFwd(OUT_C,75);
-        Wait(30);
-       }
-       else
-       {
-        OnFwd(OUT_AB,75);
-        OnRev(OUT_C,75);
-        Wait(40);
-       }
+    //Curva
+
+task Curva.1() {
+   OnRev(OUT_AB, 100);
+}
+task Curva.2() {
+   OnRev(OUT_C,50);
+}
+task Curva(){
+ //start Curva.1;
+//start Curva.2;
+}
+task main(Curva) {
+   SetSensorLowspeed(IN_1);
+   SetSensorLowspeed(IN_2);
+   Wait(3000);
+   //start Curva
+   Wait(3000);
+   off(OUT_ABC);
+}
         Wait(30);
      }
 }
