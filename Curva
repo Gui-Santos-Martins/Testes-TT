@@ -11,10 +11,10 @@
 #define sensorD SensorUS(IN_2)
 
 task Curva.1() {
-   OnRev(OUT_AB, 100)
+   OnRev(OUT_AB, 100);
 }
 task Curva.2() {
-   OnRev(OUT_C,50)
+   OnRev(OUT_C,50);
 }
 task Curva(Curva.2,Curva.1){
  Start Curva.1 && Curva.2
@@ -24,6 +24,6 @@ task main(Curva) {
    SetSensorLowspeed(IN_2);
    Wait(3000);
    Start Curva()
-   Wait(3000)
-   off(OUT_ABC)
+   Wait(3000);
+   off(OUT_ABC);
 }
