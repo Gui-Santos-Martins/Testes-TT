@@ -1,0 +1,231 @@
+//==============================================================================
+//===| TAMANDUTECH EQUIPE DE ROBÓTICA  |========================================
+//===|         KAREN PLANKTON 1        |========================================
+//===|       DESENVOLVIDO EM 2023      |========================================
+//==============================================================================
+
+//=== Objetivo:
+
+//Plataforma de estratégias unificada
+// Aplicável em robôs do tipo AC+B, onde B é desarmado ao início do round e segue
+//  aplicando força até o final da luta (rampas e etc).
+
+//==============================================================================
+
+//=== Robôs Integrados:
+
+//=== Lavagirl (v.Estelar) 2023 ================================================
+//=== Sharkboy (v.Robin)   2023 ================================================
+
+//==============================================================================
+
+//Definições e variáveis =======================================================
+
+#define sE SensorUS(IN_1)
+#define sM SensorUS(IN_2)
+#define sD SensorUS(IN_3)
+
+int dst  = 35;         // Distância -> aplicado na busca para distância máxima
+int robo = -1;         // Robô -> Ajusta os parâmetros pro robô ativo
+int strt = -1;         // Estratégia -> Ajusta a movimentação inicial
+int lado = -1;         // Lado -> Lado da busca quando não encontra o adversário
+
+//==============================================================================
+//Função de escolha do robô ====================================================
+
+void escolhaRobo ()
+{
+
+  until (ButtonCount(BTNCENTER, 1)){
+  
+    int maiorcondicao = 1;
+    int menorcondicao = 0;
+    
+//---------------------------------------------------------------------Contador.
+    if (ButtonCount(BTNRIGHT, 1)){
+         robo = robo + 1;}
+    else if (ButtonCount(BTNLEFT, 1)){
+         robo = robo - 1;}
+         
+//---------------------------------Aplica os robôs e os parâmetros relacionados.
+    if (robo == 0){
+         TextOut(6, LCD_LINE3, "Lavagirl");}
+    else if (robo == 1){
+         TextOut(6, LCD_LINE3, "Sharkboy");}
+
+//--Resetar o contador caso o número de apertos passe o número máximo de opções.
+    else if (robo > maiorcondicao){
+         robo = menorcondicao;}
+    else if (robo < menorcondicao){
+         robo = maiorcondicao;}
+         
+   }
+}
+
+//==============================================================================
+//Função de escolha da estratégia===============================================
+
+void escolhaStrt ()
+{
+
+  until (ButtonCount(BTNCENTER, 1)){
+  
+    int maiorcondicao = 3;
+    int menorcondicao = 0;
+    
+    if (ButtonCount(BTNRIGHT, 1)){
+         strt = strt + 1;}
+    else if (ButtonCount(BTNLEFT, 1)){
+         strt = strt - 1;}
+
+    if (strt == 0){
+         TextOut(6, LCD_LINE4, "Basico             ");}
+    else if (strt == 1){
+         TextOut(6, LCD_LINE4, "Frentao            ");}
+    else if (strt == 2){
+         TextOut(6, LCD_LINE4, "Defensivo          ");}
+    else if (strt == 3){
+         TextOut(6, LCD_LINE4, "Defensivo Frentao  ");}
+
+
+    
+    else if (strt > maiorcondicao){
+         strt = menorcondicao;}
+    else if (strt < menorcondicao){
+         strt = maiorcondicao;}
+   }
+}
+
+//==============================================================================
+//Função de escolha de lado ====================================================
+
+void escolhaLado ()
+{
+
+  until (ButtonCount(BTNCENTER, 1)){
+  
+    int maiorcondicao = 1;
+    int menorcondicao = 0;
+    
+    if (ButtonCount(BTNRIGHT, 1)){
+         lado = lado + 1;}
+    else if (ButtonCount(BTNLEFT, 1)){
+         lado = lado - 1;}
+
+    if (lado == 0){
+         TextOut(6, LCD_LINE5, "Direita ");}
+    else if (lado == 1){
+         TextOut(6, LCD_LINE5, "Esquerda");}
+         
+
+    
+    else if (lado > maiorcondicao){
+         lado = menorcondicao;}
+    else if (lado < menorcondicao){
+         lado = maiorcondicao;}
+   }
+   
+}
+
+//==============================================================================
+//Task para abrir a rampa simultaneamente aos movimentos =======================
+
+task auxRampa()
+{
+
+//  Lavagirl
+     if (robo == 0){
+       RotateMotor(OUT_B,100,90);
+       while(true){
+          OnFwd(OUT_B,50);}
+     }
+     
+//  Sharkboy
+     else if (robo == 1){
+       RotateMotor(OUT_B,-100,90);
+       while(true){
+          OnRev(OUT_B,100);}
+     }
+}
+
+//==============================================================================
+//Função de execução da movimentação inicial ===================================
+
+void execStrat ()
+{
+
+// Básico
+    if (strt == 0){return;}
+// Frentao
+    else if (strt == 1){
+         OnRev(OUT_AC,100); Wait(750); return;}
+// Defensivo
+    else if (strt == 2){
+         RotateMotor(OUT_AC,100,500); return;}  //500 -> testar distancia
+// Defensivo Frentao
+    else if (strt == 3){
+         RotateMotor(OUT_AC,100,500);           //500 -> testar distancia
+         OnRev(OUT_AC,100); Wait(750); return;}
+}
+
+//==============================================================================
+//TASK MAIN ====================================================================
+
+task main ()
+{
+  TextOut(6, LCD_LINE1, "Alea jacta est");
+  TextOut(6, LCD_LINE2, "Bateria: ");
+  NumOut(66, LCD_LINE2, BatteryLevel());
+  SetSensorLowspeed(IN_1);
+  SetSensorLowspeed(IN_2);
+  SetSensorLowspeed(IN_3);
+  
+  escolhaRobo();
+  escolhaStrt();
+  escolhaLado();
+  
+  TextOut(6, LCD_LINE6, "Start no botao central");
+  NumOut(6, LCD_LINE7, robo, 0);
+  NumOut(26, LCD_LINE7, strt, 0);
+  NumOut(16, LCD_LINE7, lado, 0);
+  
+  until(ButtonPressed(BTNCENTER,1));
+
+  TextOut(6, LCD_LINE4, "AUUUUUUUUUUUUUUU", 1);
+
+  Wait(5000);
+  
+  start auxRampa;
+  execStrat();
+  
+  while(true)
+  {
+  
+   if (sE < dst && sD < dst) {
+        OnRev(OUT_AC,100);
+        Wait(40); }
+   
+   else if ( sE > dst && sD < dst) {
+        OnRev(OUT_A,75);
+        OnFwd(OUT_C,75);
+        Wait(40); }
+    
+   else if ( sE < dst && sD > dst) {
+        OnFwd(OUT_A,75);
+        OnRev(OUT_C,75);
+        Wait(40); }
+    
+   else{
+       if (lado == 0){
+                OnRev(OUT_A,75);
+                OnFwd(OUT_C,75);
+                Wait(40); }
+       else if (lado == 1){
+                OnFwd(OUT_A,75);
+                OnRev(OUT_C,75);
+                Wait(40); }
+   }
+   
+  }
+  
+}
